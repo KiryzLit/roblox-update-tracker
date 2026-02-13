@@ -1,0 +1,32 @@
+name: Roblox Update Tracker
+
+on:
+  schedule:
+    - cron: "*/2 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        run: python check.py
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Commit version
+        run: |
+          git config user.name "tracker"
+          git config user.email "tracker@bot.com"
+          git add last.txt
